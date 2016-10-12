@@ -14,6 +14,8 @@ public class Node<T> {
   private Map<Integer, Integer> distances;
   private List<Node<T>> adjacents;
   private Set<Node<T>> adjacentSet;
+  // @Todo: list of adjacent node weights (edge weights)
+  // @Todo: list of incoming edges
 
   // For use in naive path generation
   private double likelihood;

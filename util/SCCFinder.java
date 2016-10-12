@@ -13,9 +13,10 @@ public class SCCFinder<T> {
 
   private Map<Node<T>, Integer> low;
   private int pre;
-  private int count;
   private Stack<Node<T>> stack;
   private List<List<Node<T>>> comps;
+  // @Todo: list of component objects
+  // @Todo: component object includes Node List, Incoming List, Outgoing List
 
   public SCCFinder(Graph<T> graph) {
     comps = new ArrayList<>();
