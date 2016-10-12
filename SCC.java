@@ -1,6 +1,6 @@
 import util.Graph;
 import util.Node;
-import util.SCCFinder;
+import util.TarjanSCC;
 
 public class SCC {
 
@@ -31,7 +31,7 @@ public class SCC {
       graph.addEdge(edge[0], edge[1]);
     }
 
-    SCCFinder<Integer> scc = new SCCFinder<Integer>(graph);
+    TarjanSCC<Integer> scc = new TarjanSCC<Integer>(graph);
     System.out.println(scc.count() + " Strongly Connected Components");
     System.out.println(scc);
 

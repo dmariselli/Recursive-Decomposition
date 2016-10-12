@@ -9,7 +9,7 @@ import java.util.Stack;
 import util.Graph;
 import util.Node;
 
-public class SCCFinder<T> {
+public class TarjanSCC<T> {
 
   private Map<Node<T>, Integer> low;
   private int pre;
@@ -18,7 +18,7 @@ public class SCCFinder<T> {
   // @Todo: list of component objects
   // @Todo: component object includes Node List, Incoming List, Outgoing List
 
-  public SCCFinder(Graph<T> graph) {
+  public TarjanSCC(Graph<T> graph) {
     comps = new ArrayList<>();
     low = new HashMap<>();
     stack = new Stack<>();
