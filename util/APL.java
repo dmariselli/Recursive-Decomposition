@@ -4,21 +4,20 @@ import java.util.List;
 
 public class APL {
 
-  public static <T> void compute(Graph<T> graph, Node<T> u, Node<T> v) {
+  public static <T> int[] compute(Graph<T> graph, Node<T> u, Node<T> v) {
     TarjanSCC<T> tarjan = new TarjanSCC<>(graph);
-    System.out.println("Tarjan's Algorithm: " + tarjan);
+    // System.out.println("Tarjan's Algorithm: " + tarjan);
     List<SCC<T>> sccs = tarjan.getSCCs();
 
     if (sccs.size() == graph.size()) {
-      System.out.println("Work is complete. Use Tobi's Algorithm.");
+      return PathFinder.dagTraversal(graph, u.getValue(), v.getValue());
     } else {
-      System.out.println("Constructing Supergraph");
+      // System.out.println("Constructing Supergraph");
       Graph<T> supergraph = new Graph<>();
       populateGraph(supergraph, sccs, u, v);
-      System.out.println("SuperGraph: \n" + supergraph);
       decomposeGraph(supergraph, sccs, u, v);
       System.out.println("SuperGraph: \n" + supergraph);
-
+      return PathFinder.dagTraversal(supergraph, u.getValue(), v.getValue());
     }
   }
 
@@ -32,8 +31,9 @@ public class APL {
             Graph<T> subgraph = new Graph<>();
             makeSubgraph(graph, subgraph, scc, entryNode, exitNode);
             // add edge with value found in APL calculation
-            graph.addEdge(entryNode.getValue(), exitNode.getValue());
-            APL.compute(subgraph, entryNode, exitNode);
+            int[] values = APL.compute(subgraph, entryNode, exitNode);
+            System.out.println("Values: " + values[0] + " " + values[1]);
+            graph.addEdge(entryNode.getValue(), exitNode.getValue(), values[0], values[1]);
           }
         }
       }
@@ -45,13 +45,14 @@ public class APL {
     for (Node<T> node : scc.getNodes()) {
       if (!node.equals(y)) {
         for (Node<T> adjNode : node.getAdjacents()) {
+          System.out.println("Node: " + node + " adj: " + adjNode);
           if (scc.contains(adjNode) && !adjNode.equals(x)) {
             subgraph.addEdge(node.getValue(), adjNode.getValue()); // adding edge will also create the nodes
           }
         }
       }
     }
-    System.out.println("Subgraph: " + subgraph);
+    System.out.println("Subgraph:\n" + subgraph);
   }
 
   private static <T> void populateGraph(Graph<T> graph, List<SCC<T>> sccs, Node<T> u, Node<T> v) {

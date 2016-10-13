@@ -13,6 +13,7 @@ public class Node<T> {
   private boolean visited;
   private Map<Integer, Integer> distances;
   private List<Node<T>> adjacents;
+  private List<Edge<T>> edges;
   private Set<Node<T>> adjacentSet;
   private List<Node<T>> incomingAdjacents;
 
@@ -26,6 +27,7 @@ public class Node<T> {
     this.visited = false;
     this.distances = new HashMap<>();
     this.adjacents = new ArrayList<>();
+    this.edges = new ArrayList<>();
     this.adjacentSet = new HashSet<>();
     this.incomingAdjacents = new ArrayList<>();
   }
@@ -33,6 +35,13 @@ public class Node<T> {
   /** Adds a node to a node's adjacent list. */
   public void addAdjacent(Node<T> node) {
     adjacents.add(node);
+    edges.add(new Edge(this, node));
+    adjacentSet.add(node);
+  }
+
+  public void addAdjacent(Node<T> node, int num, int length) {
+    adjacents.add(node);
+    edges.add(new Edge(this, node, num, length));
     adjacentSet.add(node);
   }
 

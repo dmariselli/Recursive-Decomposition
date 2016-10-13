@@ -24,6 +24,9 @@ public class TarjanSCC<T> {
         dfs(graph, node);
       }
     }
+    for (T value : graph.getNodeValues()) {
+      graph.getNode(value).setVisited(false);
+    }
   }
 
   private void dfs(Graph<T> graph, Node<T> node) {

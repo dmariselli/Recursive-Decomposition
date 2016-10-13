@@ -36,7 +36,9 @@ public class APLTester {
       graph.addEdge(edge[0], edge[1]);
     }
 
-    APL.compute(graph, graph.getNode(0), graph.getNode(6));
+    int[] result = APL.compute(graph, graph.getNode(0), graph.getNode(6));
+    System.out.println("Number of paths from 0 to 6 is " + result[0]);
+    System.out.println("Average length of the paths is " + result[1]);
 
     // TarjanSCC<Integer> scc = new TarjanSCC<Integer>(graph);
     // System.out.println(scc.count() + " Strongly Connected Components");

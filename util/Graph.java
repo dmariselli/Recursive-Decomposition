@@ -28,6 +28,13 @@ public class Graph<T> {
     e.addIncomingAdjacent(s);
   }
 
+  public void addEdge(T start, T end, int num, int length) {
+    Node<T> s = findOrConstructNode(start);
+    Node<T> e = findOrConstructNode(end);
+    s.addAdjacent(e, num, length);
+    e.addIncomingAdjacent(s);
+  }
+
   public Node<T> getNode(T value) {
     return nodeMap.get(value);
   }
