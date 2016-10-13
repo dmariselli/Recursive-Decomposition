@@ -47,7 +47,7 @@ public class Graph<T> {
     return getNode(value);
   }
 
-  private boolean containsNode(T value) {
+  public boolean containsNode(T value) {
     return nodeMap.containsKey(value);
   }
 

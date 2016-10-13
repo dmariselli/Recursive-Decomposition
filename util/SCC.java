@@ -1,22 +1,20 @@
 package util;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
 
 public class SCC<T> {
 
-  List<Node<T>> entryNodes;
-  List<Node<T>> exitNodes;
+  Set<Node<T>> entryNodes;
+  Set<Node<T>> exitNodes;
   Set<Node<T>> nodes;
   boolean isEntryNodesComputed = false;
   boolean isExitNodesComputed = false;
 
   public SCC() {
-    entryNodes = new ArrayList<>();
-    exitNodes = new ArrayList<>();
+    entryNodes = new HashSet<>();
+    exitNodes = new HashSet<>();
     nodes = new HashSet<>();
   }
 
@@ -24,7 +22,11 @@ public class SCC<T> {
     nodes.add(node);
   }
 
-  public List<Node<T>> getEntryNodes() {
+  public boolean contains(Node<T> node) {
+    return nodes.contains(node);
+  }
+
+  public Set<Node<T>> getEntryNodes() {
     if (!isEntryNodesComputed) {
       for (Node<T> node : nodes) {
         for (Node<T> inAdjNode : node.getIncomingAdjacents()) {
@@ -39,7 +41,7 @@ public class SCC<T> {
     return entryNodes;
   }
 
-  public List<Node<T>> getExitNodes() {
+  public Set<Node<T>> getExitNodes() {
     if (!isExitNodesComputed) {
       for (Node<T> node : nodes) {
         for (Node<T> adjNode : node.getAdjacents()) {
