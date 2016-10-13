@@ -6,7 +6,7 @@ public class APL {
 
   public static <T> void compute(Graph<T> graph, Node<T> u, Node<T> v) {
     TarjanSCC<T> tarjan = new TarjanSCC<>(graph);
-    System.out.println(tarjan);
+    System.out.println("Tarjan's Algorithm: " + tarjan);
     List<SCC<T>> sccs = tarjan.getSCCs();
 
     if (sccs.size() == graph.size()) {
@@ -16,22 +16,60 @@ public class APL {
       Graph<T> supergraph = new Graph<>();
       populateGraph(supergraph, sccs, u, v);
       System.out.println("SuperGraph: \n" + supergraph);
+      decomposeGraph(supergraph, sccs, u, v);
+      System.out.println("SuperGraph: \n" + supergraph);
 
     }
   }
 
-  private static <T> void populateGraph(Graph<T> graph, List<SCC<T>> sccs, Node<T> u, Node<T> v) {
-    addSpecialNodes(graph, sccs);
-    addCrossEdges(graph, sccs);
-    graph.addNode(u.getValue());
-    graph.addNode(v.getValue());
+  private static <T> void decomposeGraph(Graph<T> graph, List<SCC<T>> sccs, Node<T> u, Node<T> v) {
+    for (SCC<T> scc : sccs) {
+      for (Node<T> entryNode : scc.getEntryNodes()) {
+        for (Node<T> exitNode : scc.getExitNodes()) {
+          System.out.println("X Node: " + entryNode);
+          System.out.println("Y Node: " + exitNode);
+          if (!entryNode.equals(exitNode)) {
+            Graph<T> subgraph = new Graph<>();
+            makeSubgraph(graph, subgraph, scc, entryNode, exitNode);
+            // add edge with value found in APL calculation
+            graph.addEdge(entryNode.getValue(), exitNode.getValue());
+            APL.compute(subgraph, entryNode, exitNode);
+          }
+        }
+      }
+    }
   }
 
-  private static <T> void addSpecialNodes(Graph<T> graph, List<SCC<T>> sccs) {
+  // subgraph = copy of SCC with (*, x), (y, *), crossEdges, and nodes with not edges removed
+  private static <T> void makeSubgraph(Graph<T> graph, Graph<T> subgraph, SCC<T> scc, Node<T> x, Node<T> y) {
+    for (Node<T> node : scc.getNodes()) {
+      if (!node.equals(y)) {
+        for (Node<T> adjNode : node.getAdjacents()) {
+          if (scc.contains(adjNode) && !adjNode.equals(x)) {
+            subgraph.addEdge(node.getValue(), adjNode.getValue()); // adding edge will also create the nodes
+          }
+        }
+      }
+    }
+    System.out.println("Subgraph: " + subgraph);
+  }
+
+  private static <T> void populateGraph(Graph<T> graph, List<SCC<T>> sccs, Node<T> u, Node<T> v) {
+    addSpecialNodes(graph, sccs, u, v);
+    addCrossEdges(graph, sccs);
+  }
+
+  private static <T> void addSpecialNodes(Graph<T> graph, List<SCC<T>> sccs, Node<T> u, Node<T> v) {
     for (SCC<T> scc : sccs) {
+      if (scc.contains(u) && !scc.containsEntryNode(u)) {
+        scc.addEntryNode(u);
+      }
       for (Node<T> entryNode : scc.getEntryNodes()) {
         // System.out.println("Entry Node: " + entryNode);
         graph.addNode(entryNode.getValue());
+      }
+      if (scc.contains(v) && !scc.containsExitNode(v)) {
+        scc.addExitNode(v);
       }
       for (Node<T> exitNode : scc.getExitNodes()) {
         // System.out.println("Exit Node: " + exitNode);

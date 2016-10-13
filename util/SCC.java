@@ -9,13 +9,15 @@ public class SCC<T> {
   Set<Node<T>> entryNodes;
   Set<Node<T>> exitNodes;
   Set<Node<T>> nodes;
-  boolean isEntryNodesComputed = false;
-  boolean isExitNodesComputed = false;
+  boolean isEntryNodesComputed;
+  boolean isExitNodesComputed;
 
   public SCC() {
     entryNodes = new HashSet<>();
     exitNodes = new HashSet<>();
     nodes = new HashSet<>();
+    isEntryNodesComputed = false;
+    isExitNodesComputed = false;
   }
 
   public void add(Node<T> node) {
@@ -37,7 +39,6 @@ public class SCC<T> {
       }
       isEntryNodesComputed = !isEntryNodesComputed;
     }
-
     return entryNodes;
   }
 
@@ -52,8 +53,27 @@ public class SCC<T> {
       }
       isExitNodesComputed = !isExitNodesComputed;
     }
-    
     return exitNodes;
+  }
+
+  public Set<Node<T>> getNodes() {
+    return nodes;
+  }
+
+  public void addEntryNode(Node<T> node) {
+    entryNodes.add(node);
+  }
+
+  public void addExitNode(Node<T> node) {
+    exitNodes.add(node);
+  }
+
+  public boolean containsEntryNode(Node<T> node) {
+    return entryNodes.contains(node);
+  }
+
+  public boolean containsExitNode(Node<T> node) {
+    return exitNodes.contains(node);
   }
 
   public int size() {

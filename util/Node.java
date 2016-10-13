@@ -129,6 +129,14 @@ public class Node<T> {
   }
 
   @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Node) {
+      return this.value == ((Node<T>) obj).getValue();
+    }
+    return false;
+  }
+
+  @Override
   public String toString() {
     return value.toString();
   }

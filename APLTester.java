@@ -36,7 +36,7 @@ public class APLTester {
       graph.addEdge(edge[0], edge[1]);
     }
 
-    APL.compute(graph, graph.getNode(1), graph.getNode(5));
+    APL.compute(graph, graph.getNode(0), graph.getNode(6));
 
     // TarjanSCC<Integer> scc = new TarjanSCC<Integer>(graph);
     // System.out.println(scc.count() + " Strongly Connected Components");
