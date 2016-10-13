@@ -25,6 +25,7 @@ public class Graph<T> {
     Node<T> s = findOrConstructNode(start);
     Node<T> e = findOrConstructNode(end);
     s.addAdjacent(e);
+    e.addIncomingAdjacent(s);
   }
 
   public Node<T> getNode(T value) {

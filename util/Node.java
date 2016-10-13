@@ -14,8 +14,7 @@ public class Node<T> {
   private Map<Integer, Integer> distances;
   private List<Node<T>> adjacents;
   private Set<Node<T>> adjacentSet;
-  // @Todo: list of adjacent node weights (edge weights)
-  // @Todo: list of incoming edges
+  private List<Node<T>> incomingAdjacents;
 
   // For use in naive path generation
   private double likelihood;
@@ -28,12 +27,17 @@ public class Node<T> {
     this.distances = new HashMap<>();
     this.adjacents = new ArrayList<>();
     this.adjacentSet = new HashSet<>();
+    this.incomingAdjacents = new ArrayList<>();
   }
 
   /** Adds a node to a node's adjacent list. */
   public void addAdjacent(Node<T> node) {
     adjacents.add(node);
     adjacentSet.add(node);
+  }
+
+  public void addIncomingAdjacent(Node<T> node) {
+    incomingAdjacents.add(node);
   }
 
   /** Retrieved the value contained by this node. */
@@ -54,6 +58,10 @@ public class Node<T> {
   /** Returns a list of adjacent nodes. */
   public List<Node<T>> getAdjacents() {
     return adjacents;
+  }
+
+  public List<Node<T>> getIncomingAdjacents() {
+    return incomingAdjacents;
   }
 
   /**

@@ -6,20 +6,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import util.Graph;
-import util.Node;
-
 public class TarjanSCC<T> {
 
   private Map<Node<T>, Integer> low;
   private int pre;
   private Stack<Node<T>> stack;
-  private List<List<Node<T>>> comps;
-  // @Todo: list of component objects
-  // @Todo: component object includes Node List, Incoming List, Outgoing List
+  private List<SCC<T>> sccs;
 
   public TarjanSCC(Graph<T> graph) {
-    comps = new ArrayList<>();
+    sccs = new ArrayList<>();
     low = new HashMap<>();
     stack = new Stack<>();
     int vertices = graph.size();
@@ -48,14 +43,14 @@ public class TarjanSCC<T> {
       low.put(node, min);
       return;
     }
-    List<Node<T>> component = new ArrayList<>();
+    SCC<T> scc = new SCC<>();
     Node<T> w;
     do {
       w = stack.pop();
-      component.add(w);
+      scc.add(w);
       low.put(w, graph.size());
     } while (!w.equals(node));
-    comps.add(component);
+    sccs.add(scc);
   }
 
   /**
@@ -63,12 +58,12 @@ public class TarjanSCC<T> {
    * @return the number of strong components
    */ 
   public int count() {
-    return comps.size();
+    return sccs.size();
   }
 
   @Override
   public String toString() {
-    return comps.toString();
+    return sccs.toString();
   }
 
 }
