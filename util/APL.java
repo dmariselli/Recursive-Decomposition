@@ -21,17 +21,26 @@ public class APL {
   }
 
   private static <T> void populateGraph(Graph<T> graph, List<SCC<T>> sccs, Node<T> u, Node<T> v) {
-    for (SCC<T> scc : sccs) {
-        for (Node<T> entryNode : scc.getEntryNodes()) {
-          // System.out.println("Entry Node: " + entryNode);
-          graph.addNode(entryNode.getValue());
-        }
-        for (Node<T> exitNode : scc.getExitNodes()) {
-          // System.out.println("Exit Node: " + exitNode);
-          graph.addNode(exitNode.getValue());
-        }
-      }
+    addSpecialNodes(graph, sccs);
+    addCrossEdges(graph, sccs);
+    graph.addNode(u.getValue());
+    graph.addNode(v.getValue());
+  }
 
+  private static <T> void addSpecialNodes(Graph<T> graph, List<SCC<T>> sccs) {
+    for (SCC<T> scc : sccs) {
+      for (Node<T> entryNode : scc.getEntryNodes()) {
+        // System.out.println("Entry Node: " + entryNode);
+        graph.addNode(entryNode.getValue());
+      }
+      for (Node<T> exitNode : scc.getExitNodes()) {
+        // System.out.println("Exit Node: " + exitNode);
+        graph.addNode(exitNode.getValue());
+      }
+    }
+  }
+
+  private static <T> void addCrossEdges(Graph<T> graph, List<SCC<T>> sccs) {
     for (SCC<T> scc : sccs) {
       for (Node<T> exitNode : scc.getExitNodes()) {
         // System.out.println("Exit Node To Analyze: "  + exitNode);
@@ -44,9 +53,6 @@ public class APL {
         }
       }
     }
-
-      graph.addNode(u.getValue());
-      graph.addNode(v.getValue());
   }
 
 }
