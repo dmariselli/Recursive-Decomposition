@@ -61,6 +61,10 @@ public class TarjanSCC<T> {
     return sccs.size();
   }
 
+  public List<SCC<T>> getSCCs() {
+    return sccs;
+  }
+
   @Override
   public String toString() {
     return sccs.toString();
