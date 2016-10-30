@@ -69,10 +69,16 @@ public class SCC<T> {
   }
 
   public boolean containsEntryNode(Node<T> node) {
+    if (!isEntryNodesComputed) {
+      getEntryNodes();
+    }
     return entryNodes.contains(node);
   }
 
   public boolean containsExitNode(Node<T> node) {
+    if (!isExitNodesComputed) {
+      getExitNodes();
+    }
     return exitNodes.contains(node);
   }
 

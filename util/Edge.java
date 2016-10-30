@@ -28,6 +28,18 @@ public class Edge<T> {
     avgLength = length;
   }
 
+  public boolean contains(Node<T> node) {
+    return exitNode.equals(node);
+  }
+
+  public int getNumOfPaths() {
+    return numOfPaths;
+  }
+
+  public int getAvgLength() {
+    return avgLength;
+  }
+
   public Node<T> getEntryNode() {
     return entryNode;
   }

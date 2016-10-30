@@ -73,6 +73,10 @@ public class Node<T> {
     return incomingAdjacents;
   }
 
+  public List<Edge<T>> getEdges() {
+    return edges;
+  }
+
   /**
    * Adds a length to the value to the map of nodes determined by the
    * distance to a destination
