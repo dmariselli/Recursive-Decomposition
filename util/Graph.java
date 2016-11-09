@@ -9,10 +9,16 @@ import java.util.Set;
 public class Graph<T> {
 
   private Map<T, Node<T>> nodeMap;
+  // private boolean hasSuperEdges;
 
   public Graph() {
     nodeMap = new HashMap<>();
+    // hasSuperEdges = false;
   }
+
+  // public boolean hasSuperEdges() {
+  //   return hasSuperEdges;
+  // }
 
   public void addNode(T value) {
     if (!containsNode(value)) {
@@ -28,11 +34,12 @@ public class Graph<T> {
     e.addIncomingAdjacent(s);
   }
 
-  public void addEdge(T start, T end, int num, int length) {
+  public void addSuperEdge(T start, T end, double num, double length) {
     Node<T> s = findOrConstructNode(start);
     Node<T> e = findOrConstructNode(end);
-    s.addAdjacent(e, num, length);
     e.addIncomingAdjacent(s);
+    s.addSuperAdjacent(e, num, length);
+    // hasSuperEdges = true;
   }
 
   public Node<T> getNode(T value) {

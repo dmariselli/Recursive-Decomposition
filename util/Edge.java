@@ -11,8 +11,8 @@ public class Edge<T> {
 
   Node<T> entryNode;
   Node<T> exitNode;
-  int numOfPaths;
-  int avgLength;
+  double numOfPaths;
+  double avgLength;
 
   public Edge(Node<T> entry, Node<T> exit) {
     entryNode = entry;
@@ -21,7 +21,7 @@ public class Edge<T> {
     avgLength = 1;
   }
 
-  public Edge(Node<T> entry, Node<T> exit, int num, int length) {
+  public Edge(Node<T> entry, Node<T> exit, double num, double length) {
     entryNode = entry;
     exitNode = exit;
     numOfPaths = num;
@@ -32,11 +32,11 @@ public class Edge<T> {
     return exitNode.equals(node);
   }
 
-  public int getNumOfPaths() {
+  public double getNumOfPaths() {
     return numOfPaths;
   }
 
-  public int getAvgLength() {
+  public double getAvgLength() {
     return avgLength;
   }
 

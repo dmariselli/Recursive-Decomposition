@@ -11,7 +11,7 @@ public class Node<T> {
 
   private T value;
   private boolean visited;
-  private Map<Integer, Integer> distances;
+  private Map<Double, Double> distances;
   private List<Node<T>> adjacents;
   private List<Edge<T>> edges;
   private Set<Node<T>> adjacentSet;
@@ -25,6 +25,7 @@ public class Node<T> {
   public Node(T value) {
     this.value = value;
     this.visited = false;
+    // this.hasSuperEdge = false;
     this.distances = new HashMap<>();
     this.adjacents = new ArrayList<>();
     this.edges = new ArrayList<>();
@@ -35,14 +36,21 @@ public class Node<T> {
   /** Adds a node to a node's adjacent list. */
   public void addAdjacent(Node<T> node) {
     adjacents.add(node);
-    edges.add(new Edge(this, node));
     adjacentSet.add(node);
+    edges.add(new Edge(this, node));
   }
 
-  public void addAdjacent(Node<T> node, int num, int length) {
+  public void addSuperAdjacent(Node<T> node, double num, double length) {
     adjacents.add(node);
-    edges.add(new Edge(this, node, num, length));
     adjacentSet.add(node);
+    edges.add(new Edge(this, node, num, length));
+  }
+
+  public Edge<T> addSuperEdge(Node<T> node) {
+    Edge<T> nEdge = new Edge(this, node, 1, 1);
+    edges.add(nEdge);
+    // hasSuperEdge = true;
+    return nEdge;
   }
 
   public void addIncomingAdjacent(Node<T> node) {
@@ -82,11 +90,11 @@ public class Node<T> {
    * distance to a destination
    *
    */
-  public void addDistance(int length) {
+  public void addDistance(double length) {
     if (distances.containsKey(length)) {
       distances.put(length, distances.get(length) + 1);
     } else {
-      distances.put(length, 1);
+      distances.put(length, 1.0);
     }
   }
 
@@ -95,17 +103,17 @@ public class Node<T> {
    * for the mapping of path-length to occurrences.
    *
    */
-  public void addDistance(int length, int times) {
+  public void addDistance(double length, double times) {
     distances.put(length, times);
   }
 
   /** Retrives the path-length to occurrence mappings. */
-  public Map<Integer, Integer> getDistances() {
+  public Map<Double, Double> getDistances() {
     return distances;
   }
 
   /** Gets the count for a partcular distance */
-  public Integer getDistanceCount(int count) {
+  public Double getDistanceCount(double count) {
     return distances.get(count);
   }
 
