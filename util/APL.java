@@ -5,8 +5,14 @@ import java.util.List;
 public class APL {
 
   public static <T> double[] compute(Graph<T> graph, Node<T> u, Node<T> v) {
+    double[] result = computeHelper(graph, u, v);
+    result[1] = result[1] / result[0];
+    return result;
+  }
+
+  public static <T> double[] computeHelper(Graph<T> graph, Node<T> u, Node<T> v) {
     TarjanSCC<T> tarjan = new TarjanSCC<>(graph);
-    // System.out.println("Tarjan's Algorithm: " + tarjan);
+    System.out.println("Tarjan's Algorithm: " + tarjan);
     List<SCC<T>> sccs = tarjan.getSCCs();
 
     if (sccs.size() == graph.size()) {
@@ -31,7 +37,7 @@ public class APL {
             Graph<T> subgraph = new Graph<>();
             makeSubgraph(graph, subgraph, scc, entryNode, exitNode);
             // add edge with value found in APL calculation
-            double[] values = APL.compute(subgraph, entryNode, exitNode);
+            double[] values = APL.computeHelper(subgraph, entryNode, exitNode);
             System.out.println("Values: " + values[0] + " " + values[1]);
             System.out.println("Adding super edge between " + entryNode + " and " + exitNode);
             graph.addSuperEdge(entryNode.getValue(), exitNode.getValue(), values[0], values[1]);

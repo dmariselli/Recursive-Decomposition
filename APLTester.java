@@ -8,10 +8,10 @@ public class APLTester {
   public static void main(String[] args) {
     Graph<Integer> graph = new Graph<>();
     int[][] edges
-        // = {{0, 1}, {1, 2}, {2, 3}, {3, 2},
-        //    {3, 7}, {7, 3}, {2, 6}, {7, 6},
-        //    {5, 6}, {6, 5}, {1, 5}, {4, 5},
-        //    {4, 0}, {1, 4}};
+        = {{0, 1}, {1, 2}, {2, 3}, {3, 2},
+           {3, 7}, {7, 3}, {2, 6}, {7, 6},
+           {5, 6}, {6, 5}, {1, 5}, {4, 5},
+           {4, 0}, {1, 4}};
         // 3 Strongly Connected Components
         // 4 paths from 0 to 6
         // Avg path length is 3.75
@@ -24,11 +24,11 @@ public class APLTester {
         // ? paths from 4 to 1
         // Avg path length is ?
 
-        = {{1, 2}, {1, 3}, {1, 4}, {1, 5},
-           {2, 1}, {2, 3}, {2, 4}, {2, 5},
-           {3, 1}, {3, 2}, {3, 4}, {3, 5},
-           {4, 1}, {4, 2}, {4, 3}, {4, 5},
-           {5, 1}, {5, 2}, {5, 3}, {5, 4}};  
+        // = {{1, 2}, {1, 3}, {1, 4}, {1, 5},
+        //    {2, 1}, {2, 3}, {2, 4}, {2, 5},
+        //    {3, 1}, {3, 2}, {3, 4}, {3, 5},
+        //    {4, 1}, {4, 2}, {4, 3}, {4, 5},
+        //    {5, 1}, {5, 2}, {5, 3}, {5, 4}};  
         // 1 Strongly Connected Component
         // 16 paths from 1 to 5
         // Avg path length is 3
@@ -42,7 +42,7 @@ public class APLTester {
       graph.addEdge(edge[0], edge[1]);
     }
 
-    double[] result = APL.compute(graph, graph.getNode(1), graph.getNode(5));
+    double[] result = APL.compute(graph, graph.getNode(0), graph.getNode(6));
     System.out.println("Number of paths from 0 to 6 is " + result[0]);
     System.out.println("Average length of the paths is " + result[1]);
 

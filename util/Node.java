@@ -16,6 +16,8 @@ public class Node<T> {
   private List<Edge<T>> edges;
   private Set<Node<T>> adjacentSet;
   private List<Node<T>> incomingAdjacents;
+  private double numOfPaths;
+  private double lenOfPaths;
 
   // For use in naive path generation
   private double likelihood;
@@ -31,6 +33,24 @@ public class Node<T> {
     this.edges = new ArrayList<>();
     this.adjacentSet = new HashSet<>();
     this.incomingAdjacents = new ArrayList<>();
+    this.numOfPaths = 0;
+    this.lenOfPaths = 0;
+  }
+
+  public void setNumOfPaths(double paths) {
+    numOfPaths = paths;
+  }
+
+  public void setLengthOfPaths(double length) {
+    lenOfPaths = length;
+  }
+
+  public double getNumOfPaths() {
+    return numOfPaths;
+  }
+
+  public double getLengthOfPaths() {
+    return lenOfPaths;
   }
 
   /** Adds a node to a node's adjacent list. */

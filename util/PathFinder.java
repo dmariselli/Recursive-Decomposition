@@ -171,19 +171,11 @@ public class PathFinder {
     Node<T> eNode = graph.getNode(end);
     List<Node<T>> dfsOrdered = dfsTopoSort(graph, sNode);
     System.out.println("DFS Order: " + dfsOrdered);
-    eNode.addDistance(0);
     eNode.setVisited(true);
     calculateSuperPath(dfsOrdered, 0, sNode, eNode);
-    double lengthSums = 0;
-    double totalNumPaths = 0;
-    for (Map.Entry<Double, Double> entry : sNode.getDistances().entrySet()) {
-      lengthSums += entry.getValue() * entry.getKey();
-      totalNumPaths += entry.getValue();
-    }
-    System.out.println("Values being returned: " + totalNumPaths + " " + (totalNumPaths == 0 ? 0
-        : lengthSums/totalNumPaths));
-    return new double[]{totalNumPaths, totalNumPaths == 0 ? 0
-        : lengthSums/totalNumPaths};
+    System.out.println("Values being returned: " + sNode.getNumOfPaths() + " " +
+        sNode.getLengthOfPaths());
+    return new double[]{sNode.getNumOfPaths(), sNode.getLengthOfPaths()};
   }
 
   /**
@@ -265,152 +257,40 @@ public class PathFinder {
     }
   }
 
-  // private static <T> void calculateOriginalSuperPath(List<Node<T>> sorted,
-  //     int position, Node<T> curr, Node<T> end) {
-  //   if (!curr.getVisited()) {
-  //     curr.setVisited(true);
-  //     for (int i = position + 1; i < sorted.size(); i++) {
-  //       System.out.println("There is an edge between " + curr + " and " + sorted.get(i) + ": " + curr.hasEdge(sorted.get(i)));
-  //       if (curr.hasEdge(sorted.get(i))) {
-  //         Node<T> adj = sorted.get(i);
-  //         // System.out.println("Nodes to look at next: " + adj + " " + end);
-  //         calculateSuperPath(sorted, i, adj, end);
-  //         // length, num of times length happened
-  //         for (Map.Entry<Double, Double> entry
-  //             : adj.getDistances().entrySet()) {
-  //           // System.out.println("Entry: " + entry);
-  //           double currCount = curr.getDistanceCount(entry.getKey() + 1) == null ? 
-  //               0 : curr.getDistanceCount(entry.getKey() + 1);
-  //               // length, num of times length appeared
-  //           Edge<T> adjEdge = null;
-  //           if (curr.hasSuperEdge()) {
-  //             // System.out.println("curr has superedge");
-  //             for (Edge<T> edge : curr.getEdges()) {
-  //               if (edge.contains(adj)) {
-  //                 adjEdge = edge;
-  //               }
-  //             }
-  //           }
-  //           // System.out.println(curr);
-  //           // System.out.println(adj);
-  //           if (adjEdge != null) {
-  //             System.out.println("Super " + curr + " " + adj + " AvgLength: " + adjEdge.getAvgLength() + " NumOfPaths: " + adjEdge.getNumOfPaths());
-  //             curr.addDistance(adjEdge.getAvgLength(), adjEdge.getNumOfPaths());
-  //           } else {
-  //             System.out.println("Regular " + curr + " " + adj + " AvgLength: " + (entry.getKey() + 1)  + " NumOfPaths: " + (entry.getValue() + currCount));
-  //             curr.addDistance(entry.getKey() + 1, entry.getValue() + currCount);
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-
-  // private static <T> void calculateModifiedSuperPath(List<Node<T>> sorted,
-  //     int position, Node<T> curr, Node<T> end) {
-  //   if (!curr.getVisited()) {
-  //     curr.setVisited(true);
-  //     for (int i = position + 1; i < sorted.size(); i++) {
-  //       System.out.println("There is an edge between " + curr + " and " + sorted.get(i) + ": " + curr.hasEdge(sorted.get(i)));
-  //       if (curr.hasEdge(sorted.get(i))) {
-  //         Node<T> adj = sorted.get(i);
-  //         // System.out.println("Nodes to look at next: " + adj + " " + end);
-  //         calculateSuperPath(sorted, i, adj, end);
-  //         System.out.println("Calculating: " + curr + " and " + adj);
-  //         Edge<T> adjEdge = null;
-  //         if (curr.hasSuperEdge()) {
-  //           // System.out.println("curr has superedge");
-  //           for (Edge<T> edge : curr.getEdges()) {
-  //             if (edge.contains(adj)) {
-  //               adjEdge = edge;
-  //             }
-  //           }
-  //         }
-
-      //     if (adjEdge != null) {
-      //       if (adj.getEdges().size() != 0) {
-      //         for (Edge<T> edge : adj.getEdges()) {
-      //           System.out.println("Super " + curr + " " + adj + " AvgLength: " + (adjEdge.getAvgLength()+adjEdge.getAvgLength()) + " NumOfPaths: " + (adjEdge.getNumOfPaths()*adjEdge.getNumOfPaths()));
-      //           curr.addDistance(adjEdge.getAvgLength() + adjEdge.getAvgLength(), adjEdge.getNumOfPaths() * adjEdge.getNumOfPaths());
-      //         }
-      //       } else {
-      //         System.out.println(adj.getDistances());
-      //         for (Map.Entry<Double, Double> entry
-      //             : adj.getDistances().entrySet()) {
-      //           // System.out.println("Entry: " + entry);
-      //           double currCount = curr.getDistanceCount(entry.getKey() + adjEdge.getAvgLength()) == null ? 
-      //               0 : curr.getDistanceCount(entry.getKey() + adjEdge.getAvgLength());
-      //           // System.out.println("Super " + curr + " " + adj + " AvgLength: " + (adjEdge.getAvgLength()+adjEdge.getAvgLength()) + " NumOfPaths: " + (adjEdge.getNumOfPaths()*adjEdge.getNumOfPaths()));
-      //           System.out.println("Super with Regular " + curr + " " + adj + " AvgLength: " + (entry.getKey() + adjEdge.getAvgLength()) + " NumOfPaths: " + (entry.getValue() + currCount));
-      //           // adding currCount at end of line doesn't make a difference? always adding 0?
-      //           curr.addDistance(entry.getKey() + adjEdge.getAvgLength(), entry.getValue() + currCount);
-      //         }
-      //       }
-      //     } else {
-      //       // length, num of times length happened
-      //       for (Map.Entry<Double, Double> entry
-      //           : adj.getDistances().entrySet()) {
-      //         // System.out.println("Entry: " + entry);
-      //         double currCount = curr.getDistanceCount(entry.getKey() + 1) == null ? 
-      //             0 : curr.getDistanceCount(entry.getKey() + 1);
-      //             // length, num of times length appeared
-      //         System.out.println("Regular " + curr + " " + adj + " AvgLength: " + (entry.getKey() + 1)  + " NumOfPaths: " + (entry.getValue() + currCount));
-      //         curr.addDistance(entry.getKey() + 1, entry.getValue() + currCount);
-      //       }
-      //     }
-      //   }
-      // }
-  //   }
-  // }
-
   private static <T> void calculateSuperPath(List<Node<T>> sorted,
       int position, Node<T> curr, Node<T> end) {
     if (!curr.getVisited()) {
       curr.setVisited(true);
       for (int i = position + 1; i < sorted.size(); i++) {
-        System.out.println("There is an edge between " + curr + " and " + sorted.get(i) + ": " + curr.hasEdge(sorted.get(i)));
+        // System.out.println("There is an edge between " + curr + " and " + sorted.get(i) + ": " + curr.hasEdge(sorted.get(i)));
         if (curr.hasEdge(sorted.get(i))) {
           Node<T> adj = sorted.get(i);
-          // System.out.println("Nodes to look at next: " + adj + " " + end);
           calculateSuperPath(sorted, i, adj, end);
+          System.out.println("Nodes to look at next: " + curr + " " + adj);
 
           Edge<T> adjEdge = null;
-          // if (curr.hasSuperEdge()) {
-            // System.out.println("curr has superedge");
-            for (Edge<T> edge : curr.getEdges()) {
-              if (edge.contains(adj)) {
-                adjEdge = edge;
-              }
+          for (Edge<T> edge : curr.getEdges()) {
+            if (edge.contains(adj)) {
+              adjEdge = edge;
             }
-
-            if (adjEdge == null) {
-              System.out.println("NOT SUPPOSED TO HAPPEN");
-              adjEdge = curr.addSuperEdge(adj);
-            }
-          // } else {
-            // System.out.println("NOT SUPPOSED TO HAPPEN");
-            // adjEdge = curr.addSuperEdge(adj);
-          // }
-
-          // length, num of times length happened
-          for (Map.Entry<Double, Double> entry
-              : adj.getDistances().entrySet()) {
-            // System.out.println("Entry: " + entry);
-            double currCount = curr.getDistanceCount(entry.getKey() + adjEdge.getAvgLength()) == null ? 
-                    0 : curr.getDistanceCount(entry.getKey() + adjEdge.getAvgLength());
-                // length, num of times length appeared
-            // System.out.println(curr);
-            // System.out.println(adj);
-            System.out.println("Super " + curr + " " + adj + " AvgLength: " + (entry.getKey() + adjEdge.getAvgLength()) + " NumOfPaths: " + (entry.getValue() + currCount));
-            curr.addDistance(entry.getKey() + adjEdge.getAvgLength(), entry.getValue() + currCount);
-            // if (adjEdge != null) {
-            //   System.out.println("Super " + curr + " " + adj + " AvgLength: " + adjEdge.getAvgLength() + " NumOfPaths: " + adjEdge.getNumOfPaths());
-            //   curr.addDistance(adjEdge.getAvgLength(), adjEdge.getNumOfPaths());
-            // } else {
-            //   System.out.println("Regular " + curr + " " + adj + " AvgLength: " + (entry.getKey() + 1)  + " NumOfPaths: " + (entry.getValue() + currCount));
-            //   curr.addDistance(entry.getKey() + 1, entry.getValue() + currCount);
-            // }
           }
+
+          double totalNumPaths = adj.getNumOfPaths() == 0 ? 1 : adj.getNumOfPaths();
+          double totalLength = adj.getLengthOfPaths();
+
+          double originalNumPaths = adjEdge.getNumOfPaths();
+          double originalLength = adjEdge.getTotalLength();
+
+          double newNumPaths = totalNumPaths * originalNumPaths;
+          double newLenPaths = (totalNumPaths * originalLength) + (originalNumPaths * totalLength);
+
+          double currNumPaths = curr.getNumOfPaths();
+          double currLength = curr.getLengthOfPaths();
+
+          curr.setNumOfPaths(newNumPaths + currNumPaths);
+          curr.setLengthOfPaths(newLenPaths + currLength);
+          System.out.println("Calculated num of paths: " + (totalNumPaths * originalNumPaths));
+          System.out.println("Calculated len of paths: " + ((totalNumPaths * originalLength) + (originalNumPaths * totalLength)));
         }
       }
     }
