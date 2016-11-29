@@ -13,14 +13,10 @@ public class Edge<T> {
   Node<T> exitNode;
   double numOfPaths;
   double totalLength;
-  Set<Node<T>> nodes; // have to include entry exit nodes?
 
   public Edge(Node<T> entry, Node<T> exit) {
     entryNode = entry;
     exitNode = exit;
-    nodes = new HashSet<>();
-    nodes.add(entryNode);
-    nodes.add(exitNode);
     numOfPaths = 1;
     totalLength = 1;
   }
@@ -28,15 +24,8 @@ public class Edge<T> {
   public Edge(Node<T> entry, Node<T> exit, double num, double length) {
     entryNode = entry;
     exitNode = exit;
-    nodes = new HashSet<>();
-    nodes.add(entryNode);
-    nodes.add(exitNode);
     numOfPaths = num;
     totalLength = length;
-  }
-
-  public boolean pathContains(Node<T> node) {
-    return nodes.contains(node);
   }
 
   public boolean contains(Node<T> node) {
