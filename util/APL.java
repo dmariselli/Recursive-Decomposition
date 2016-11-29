@@ -16,14 +16,14 @@ public class APL {
     List<SCC<T>> sccs = tarjan.getSCCs();
 
     if (sccs.size() == graph.size()) {
-      return PathFinder.dagTraversalDecider(graph, u.getValue(), v.getValue());
+      return PathFinder.superDagTraversal(graph, u.getValue(), v.getValue());
     } else {
       // System.out.println("Constructing Supergraph");
       Graph<T> supergraph = new Graph<>();
       populateGraph(supergraph, sccs, u, v);
       decomposeGraph(supergraph, sccs, u, v);
       System.out.println("SuperGraph: \n" + supergraph);
-      return PathFinder.dagTraversalDecider(supergraph, u.getValue(), v.getValue());
+      return PathFinder.superDagTraversal(supergraph, u.getValue(), v.getValue());
     }
   }
 
