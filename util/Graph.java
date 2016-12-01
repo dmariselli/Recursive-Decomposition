@@ -30,15 +30,15 @@ public class Graph<T> {
   public void addEdge(T start, T end) {
     Node<T> s = findOrConstructNode(start);
     Node<T> e = findOrConstructNode(end);
-    s.addAdjacent(e);
-    e.addIncomingAdjacent(s);
+    Edge<T> edge = s.addAdjacent(e);
+    e.addIncomingAdjacent(s, edge);
   }
 
   public void addSuperEdge(T start, T end, double num, double length) {
     Node<T> s = findOrConstructNode(start);
     Node<T> e = findOrConstructNode(end);
-    e.addIncomingAdjacent(s);
-    s.addSuperAdjacent(e, num, length);
+    Edge<T> edge = s.addSuperAdjacent(e, num, length);
+    e.addIncomingAdjacent(s, edge);
     // hasSuperEdges = true;
   }
 

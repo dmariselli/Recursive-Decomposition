@@ -33,7 +33,7 @@ public class APL {
         for (Node<T> exitNode : scc.getExitNodes()) {
           System.out.println("X Node: " + entryNode);
           System.out.println("Y Node: " + exitNode);
-          if (!entryNode.equals(exitNode)) {
+          if (!entryNode.equalValue(exitNode)) {
             Graph<T> subgraph = new Graph<>();
             makeSubgraph(graph, subgraph, scc, entryNode, exitNode);
             // add edge with value found in APL calculation
@@ -50,11 +50,16 @@ public class APL {
   // subgraph = copy of SCC with (*, x), (y, *), crossEdges, and nodes with not edges removed
   private static <T> void makeSubgraph(Graph<T> graph, Graph<T> subgraph, SCC<T> scc, Node<T> x, Node<T> y) {
     for (Node<T> node : scc.getNodes()) {
+      // System.out.println(node);
       if (!node.equals(y)) {
         for (Node<T> adjNode : node.getAdjacents()) {
           System.out.println("Node: " + node + " adj: " + adjNode);
           if (scc.contains(adjNode) && !adjNode.equals(x)) {
-            subgraph.addEdge(node.getValue(), adjNode.getValue()); // adding edge will also create the nodes
+            if (node.equalValue(adjNode)) {
+              subgraph.addSuperEdge(node.getValue(), adjNode.getValue(), 1.0, 0.0);
+            } else {
+              subgraph.addEdge(node.getValue(), adjNode.getValue()); // adding edge will also create the nodes
+            }
           }
         }
       }
@@ -72,12 +77,18 @@ public class APL {
       if (scc.contains(u) && !scc.containsEntryNode(u)) {
         scc.addEntryNode(u);
       }
-      for (Node<T> entryNode : scc.getEntryNodes()) {
-        // System.out.println("Entry Node: " + entryNode);
-        graph.addNode(entryNode.getValue());
-      }
       if (scc.contains(v) && !scc.containsExitNode(v)) {
         scc.addExitNode(v);
+      }
+
+      scc.computeSpecialNodes();
+
+      for (Node<T> entryNode : scc.getEntryNodes()) {
+        if (entryNode.isExitNode()) {
+          System.out.println("Should not happen");
+        }
+        // System.out.println("Entry Node: " + entryNode);
+        graph.addNode(entryNode.getValue());
       }
       for (Node<T> exitNode : scc.getExitNodes()) {
         // System.out.println("Exit Node: " + exitNode);

@@ -13,12 +13,14 @@ public class Edge<T> {
   Node<T> exitNode;
   double numOfPaths;
   double totalLength;
+  // boolean isCrossEdge;
 
   public Edge(Node<T> entry, Node<T> exit) {
     entryNode = entry;
     exitNode = exit;
     numOfPaths = 1;
     totalLength = 1;
+    // isCrossEdge = false;
   }
 
   public Edge(Node<T> entry, Node<T> exit, double num, double length) {
@@ -26,7 +28,16 @@ public class Edge<T> {
     exitNode = exit;
     numOfPaths = num;
     totalLength = length;
+    // isCrossEdge = false;
   }
+
+  // public Edge(Node<T> entry, Node<T> exit, double num, double length, boolean cross) {
+  //   entryNode = entry;
+  //   exitNode = exit;
+  //   numOfPaths = num;
+  //   totalLength = length;
+  //   isCrossEdge = cross;
+  // }
 
   public boolean contains(Node<T> node) {
     return exitNode.equals(node);

@@ -16,8 +16,13 @@ public class Node<T> {
   private List<Edge<T>> edges;
   private Set<Node<T>> adjacentSet;
   private List<Node<T>> incomingAdjacents;
+  private List<Edge<T>> inEdges;
+  private List<Edge<T>> inCrossEdges;
   private double numOfPaths;
   private double lenOfPaths;
+
+  private boolean isEntryNode;
+  private boolean isExitNode;
 
   // For use in naive path generation
   private double likelihood;
@@ -33,8 +38,28 @@ public class Node<T> {
     this.edges = new ArrayList<>();
     this.adjacentSet = new HashSet<>();
     this.incomingAdjacents = new ArrayList<>();
+    this.inEdges = new ArrayList<>();
+    this.inCrossEdges = new ArrayList<>();
     this.numOfPaths = 0;
     this.lenOfPaths = 0;
+    this.isEntryNode = false;
+    this.isExitNode = false;
+  }
+
+  public Node<T> exitTransfer() {
+    Node<T> node = new Node(value);
+
+    for (Edge<T> e : edges) {
+      Edge<T> edge = node.addSuperAdjacent(e.getExitNode(), e.getNumOfPaths(), e.getTotalLength());
+      e.getExitNode().removeIncomingAdjacent(this);
+      e.getExitNode().addIncomingAdjacent(node, edge);
+    }
+    this.edges = new ArrayList<>();
+    this.adjacents = new ArrayList<>();
+    this.adjacentSet = new HashSet<>();
+
+    edges.add(new Edge(this, node, 1, 0));
+    return node;
   }
 
   public void setNumOfPaths(double paths) {
@@ -53,17 +78,37 @@ public class Node<T> {
     return lenOfPaths;
   }
 
-  /** Adds a node to a node's adjacent list. */
-  public void addAdjacent(Node<T> node) {
-    adjacents.add(node);
-    adjacentSet.add(node);
-    edges.add(new Edge(this, node));
+  public boolean isEntryNode() {
+    return isEntryNode;
   }
 
-  public void addSuperAdjacent(Node<T> node, double num, double length) {
+  public boolean isExitNode() {
+    return isExitNode;
+  }
+
+  public void setEntry(boolean val) {
+    isEntryNode = val;
+  }
+
+  public void setExit(boolean val) {
+    isExitNode = val;
+  }
+
+  /** Adds a node to a node's adjacent list. */
+  public Edge<T> addAdjacent(Node<T> node) {
     adjacents.add(node);
     adjacentSet.add(node);
-    edges.add(new Edge(this, node, num, length));
+    Edge<T> edge = new Edge(this, node);
+    edges.add(edge);
+    return edge;
+  }
+
+  public Edge<T> addSuperAdjacent(Node<T> node, double num, double length) {
+    adjacents.add(node);
+    adjacentSet.add(node);
+    Edge<T> edge = new Edge(this, node, num, length);
+    edges.add(edge);
+    return edge;
   }
 
   public Edge<T> addSuperEdge(Node<T> node) {
@@ -73,8 +118,9 @@ public class Node<T> {
     return nEdge;
   }
 
-  public void addIncomingAdjacent(Node<T> node) {
+  public void addIncomingAdjacent(Node<T> node, Edge<T> edge) {
     incomingAdjacents.add(node);
+    inEdges.add(edge);
   }
 
   /** Retrieved the value contained by this node. */
@@ -99,6 +145,10 @@ public class Node<T> {
 
   public List<Node<T>> getIncomingAdjacents() {
     return incomingAdjacents;
+  }
+
+  public void removeIncomingAdjacent(Node<T> node) {
+    incomingAdjacents.remove(node);
   }
 
   public List<Edge<T>> getEdges() {
@@ -169,16 +219,29 @@ public class Node<T> {
     System.out.println("\tCounter: " + counter);
   }
 
+  public boolean equalValue(Node<T> node) {
+    return this.value == node.getValue();
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Node) {
-      return this.value == ((Node<T>) obj).getValue();
+      boolean equality = this.value == ((Node<T>) obj).getValue();
+      equality &= this.isEntryNode == ((Node<T>) obj).isEntryNode;
+      equality &= this.isExitNode == ((Node<T>) obj).isExitNode;
+      return equality;
     }
     return false;
   }
 
   @Override
   public String toString() {
-    return value.toString();
+    if (isEntryNode) {
+      return "entry-" + value.toString();
+    } else if (isExitNode) {
+      return "exit-" + value.toString();
+    } else {
+      return value.toString();
+    }
   }
 }
