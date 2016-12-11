@@ -49,16 +49,18 @@ public class Node<T> {
   public Node<T> exitTransfer() {
     Node<T> node = new Node(value);
 
-    for (Edge<T> e : edges) {
-      Edge<T> edge = node.addSuperAdjacent(e.getExitNode(), e.getNumOfPaths(), e.getTotalLength());
-      e.getExitNode().removeIncomingAdjacent(this);
-      e.getExitNode().addIncomingAdjacent(node, edge);
-    }
-    this.edges = new ArrayList<>();
-    this.adjacents = new ArrayList<>();
-    this.adjacentSet = new HashSet<>();
+    // for (Edge<T> e : edges) {
+    //   Edge<T> edge = node.addSuperAdjacent(e.getExitNode(), e.getNumOfPaths(), e.getTotalLength());
+    //   e.getExitNode().removeIncomingAdjacent(this);
+    //   e.getExitNode().addIncomingAdjacent(node, edge);
+    // }
+    // this.edges = new ArrayList<>();
+    // this.adjacents = new ArrayList<>();
+    // this.adjacentSet = new HashSet<>();
 
-    edges.add(new Edge(this, node, 1, 0));
+    // edges.add(new Edge(this, node, 1, 0));
+    Edge<T> edge = addSuperAdjacent(node, 1, 0);
+    node.addIncomingAdjacent(this, edge);
     return node;
   }
 
@@ -236,7 +238,9 @@ public class Node<T> {
 
   @Override
   public String toString() {
-    if (isEntryNode) {
+    if (isEntryNode && isExitNode) {
+      return "en/ex-" + value.toString();
+    } else if (isEntryNode) {
       return "entry-" + value.toString();
     } else if (isExitNode) {
       return "exit-" + value.toString();

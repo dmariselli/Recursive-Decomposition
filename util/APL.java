@@ -40,6 +40,13 @@ public class APL {
             double[] values = APL.computeHelper(subgraph, entryNode, exitNode);
             System.out.println("Values: " + values[0] + " " + values[1]);
             System.out.println("Adding super edge between " + entryNode + " and " + exitNode);
+
+            // split
+            // check if exit should be split
+            // if so, split, make edge between split parts, create edge between entry and new exit
+            // move cross edge to that new node
+            // else, add super edge
+
             graph.addSuperEdge(entryNode.getValue(), exitNode.getValue(), values[0], values[1]);
           }
         }
@@ -53,7 +60,7 @@ public class APL {
       // System.out.println(node);
       if (!node.equals(y)) {
         for (Node<T> adjNode : node.getAdjacents()) {
-          System.out.println("Node: " + node + " adj: " + adjNode);
+          // System.out.println("Node: " + node + " adj: " + adjNode);
           if (scc.contains(adjNode) && !adjNode.equals(x)) {
             if (node.equalValue(adjNode)) {
               subgraph.addSuperEdge(node.getValue(), adjNode.getValue(), 1.0, 0.0);
@@ -70,6 +77,7 @@ public class APL {
   private static <T> void populateGraph(Graph<T> graph, List<SCC<T>> sccs, Node<T> u, Node<T> v) {
     addSpecialNodes(graph, sccs, u, v);
     addCrossEdges(graph, sccs);
+    System.out.println("Populated Graph:\n" + graph);
   }
 
   private static <T> void addSpecialNodes(Graph<T> graph, List<SCC<T>> sccs, Node<T> u, Node<T> v) {
@@ -81,12 +89,12 @@ public class APL {
         scc.addExitNode(v);
       }
 
-      scc.computeSpecialNodes();
+      // scc.computeSpecialNodes();
 
       for (Node<T> entryNode : scc.getEntryNodes()) {
-        if (entryNode.isExitNode()) {
-          System.out.println("Should not happen");
-        }
+        // if (entryNode.isExitNode()) {
+          // System.out.println("Should not happen");
+        // }
         // System.out.println("Entry Node: " + entryNode);
         graph.addNode(entryNode.getValue());
       }
