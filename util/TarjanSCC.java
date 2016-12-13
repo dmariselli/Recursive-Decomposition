@@ -14,14 +14,37 @@ public class TarjanSCC<T> {
   private List<SCC<T>> sccs;
 
   public TarjanSCC(Graph<T> graph) {
+    if (graph.mapSize() != 0) {
+      nodeMap(graph);
+    } else {
+      nodes(graph);
+    }
+  }
+
+  private void nodes(Graph<T> graph) {
     sccs = new ArrayList<>();
     low = new HashMap<>();
     stack = new Stack<>();
     int vertices = graph.size();
+    for (Node<T> node : graph.getNodes()) {
+      if (!node.getVisited()) {
+        dfs(graph, node, vertices);
+      }
+    }
+    for (Node<T> node : graph.getNodes()) {
+      node.setVisited(false);
+    }
+  }
+
+  private void nodeMap(Graph<T> graph) {
+    sccs = new ArrayList<>();
+    low = new HashMap<>();
+    stack = new Stack<>();
+    int vertices = graph.mapSize();
     for (T nodeValue : graph.getNodeValues()) {
       Node<T> node = graph.getNode(nodeValue);
       if (!node.getVisited()) {
-        dfs(graph, node);
+        dfs(graph, node, vertices);
       }
     }
     for (T value : graph.getNodeValues()) {
@@ -29,14 +52,14 @@ public class TarjanSCC<T> {
     }
   }
 
-  private void dfs(Graph<T> graph, Node<T> node) {
+  private void dfs(Graph<T> graph, Node<T> node, int vertices) {
     node.setVisited(true);
     int min = pre;
     low.put(node, pre++);
     stack.push(node);
     for (Node<T> adjNode : node.getAdjacents()) {
       if (!adjNode.getVisited()) {
-        dfs(graph, adjNode);
+        dfs(graph, adjNode, vertices);
       }
       if (low.get(adjNode) < min) {
         min = low.get(adjNode);
@@ -51,7 +74,7 @@ public class TarjanSCC<T> {
     do {
       w = stack.pop();
       scc.add(w);
-      low.put(w, graph.size());
+      low.put(w, vertices);
     } while (!w.equals(node));
     sccs.add(scc);
   }

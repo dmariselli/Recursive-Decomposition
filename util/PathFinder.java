@@ -10,15 +10,13 @@ public class PathFinder {
 
   // trial
   public static <T> double[] superDagTraversal(Graph<T> graph,
-      T start, T end) {
+      Node<T> sNode, Node<T> eNode) {
     System.out.println("Computing using Super Edges");
-    Node<T> sNode = graph.getNode(start);
-    Node<T> eNode = graph.getNode(end);
     List<Node<T>> dfsOrdered = dfsTopoSort(graph, sNode);
     System.out.println("DFS Order: " + dfsOrdered);
     eNode.setVisited(true);
     calculateSuperPath(dfsOrdered, 0, sNode, eNode);
-    System.out.println("Values being returned: " + sNode.getNumOfPaths() + " " +
+    System.out.println("Values being returned: Num Of Paths " + sNode.getNumOfPaths() + " Total Length " +
         sNode.getLengthOfPaths());
     return new double[]{sNode.getNumOfPaths(), sNode.getLengthOfPaths()};
   }

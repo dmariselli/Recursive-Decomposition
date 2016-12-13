@@ -12,8 +12,9 @@ public class Node<T> {
   private T value;
   private boolean visited;
   private Map<Double, Double> distances;
-  private List<Node<T>> adjacents;
+  // bad name, should be outEdges
   private List<Edge<T>> edges;
+  private List<Node<T>> adjacents;
   private Set<Node<T>> adjacentSet;
   private List<Node<T>> incomingAdjacents;
   private List<Edge<T>> inEdges;
@@ -24,15 +25,19 @@ public class Node<T> {
   private boolean isEntryNode;
   private boolean isExitNode;
 
-  // For use in naive path generation
-  private double likelihood;
-  private int counter;
+  /*
+    New fields
+  */
+  // List of cross edges that leave this node
+  private List<Edge<T>> crossOutEdges;
+  // List of cross edges that enter this node
+  private List<Edge<T>> crossInEdges;
+  // Reference to its split node (only goes from entry to exit);
+  private Node<T> splitNode;
 
-  /** Constructor */
   public Node(T value) {
     this.value = value;
     this.visited = false;
-    // this.hasSuperEdge = false;
     this.distances = new HashMap<>();
     this.adjacents = new ArrayList<>();
     this.edges = new ArrayList<>();
@@ -44,24 +49,74 @@ public class Node<T> {
     this.lenOfPaths = 0;
     this.isEntryNode = false;
     this.isExitNode = false;
+
+    this.crossOutEdges = new ArrayList<>();
+    this.crossInEdges = new ArrayList<>();
+    splitNode = null;
   }
 
+  // Outgoing cross edges are identified after edges have been created,
+  // so this method does not create a new edge, but rather keeps track
+  // of newly identified outgoing cross edge. 
+  public void addCrossOutgoing(Node<T> node, Edge<T> edge) {
+    // Since there is an outgoing cross edge, this node is an exit node
+    isExitNode = true;
+    // Edge is identified as cross edge
+    edge.setCross(true);
+    // Keep track of outgoing cross edge
+    crossOutEdges.add(edge);
+  }
+
+  public void addCrossIncoming(Node<T> node, Edge<T> edge) {
+    isEntryNode = true;
+    edge.setCross(true);
+    crossInEdges.add(edge);
+  }
+
+  public Node<T> getSplitNode() {
+    return splitNode;
+  }
+
+  // If this method is called, current node is both entry and exit node.
+  // Node must be split and newly created exit node is returned.
   public Node<T> exitTransfer() {
+    if (!isEntryNode || !isExitNode) {
+      System.out.println("Node " + this + " is not split node");
+    }
+    // Newly split exit node
     Node<T> node = new Node(value);
 
-    // for (Edge<T> e : edges) {
-    //   Edge<T> edge = node.addSuperAdjacent(e.getExitNode(), e.getNumOfPaths(), e.getTotalLength());
-    //   e.getExitNode().removeIncomingAdjacent(this);
-    //   e.getExitNode().addIncomingAdjacent(node, edge);
-    // }
-    // this.edges = new ArrayList<>();
-    // this.adjacents = new ArrayList<>();
-    // this.adjacentSet = new HashSet<>();
+    // Move outgoing cross edges from this node to the newly split exit node
+    for (Edge<T> e : crossOutEdges) {
+      Edge<T> edge = node.addSuperAdjacent(e.getExitNode(), e.getNumOfPaths(), e.getTotalLength());
+      edge.setCross(true);
+      e.getExitNode().removeIncomingAdjacent(this);
+      e.getExitNode().addIncomingAdjacent(node, edge);
+    }
 
-    // edges.add(new Edge(this, node, 1, 0));
+    // Remove those outgoing cross edges from our list of outgoing edges
+    for (Edge<T> e : crossOutEdges) {
+      adjacents.remove(e.getExitNode());
+      adjacentSet.remove(e.getExitNode());
+      edges.remove(e);
+    }
+
+    // Clear outgoing cross edges list
+    crossOutEdges = new ArrayList<>();
+
+    // Mark this node as not being an exit node
+    isExitNode = false;
+
+    // Add a special edge of length 0 from this node to the newly split node
     Edge<T> edge = addSuperAdjacent(node, 1, 0);
     node.addIncomingAdjacent(this, edge);
+    splitNode = node;
+    node.setSplitNode(this);
     return node;
+  }
+
+  public void setSplitNode(Node<T> node) {
+    this.splitNode = node;
   }
 
   public void setNumOfPaths(double paths) {
@@ -149,12 +204,27 @@ public class Node<T> {
     return incomingAdjacents;
   }
 
+  // Does not remove inEdges record!
   public void removeIncomingAdjacent(Node<T> node) {
     incomingAdjacents.remove(node);
+    // O(n^2) removal
+    for (Edge<T> edge : new ArrayList<>(inEdges)) {
+      if (edge.getExitNode().equals(this)) {
+        inEdges.remove(edge);
+      }
+    }
   }
 
   public List<Edge<T>> getEdges() {
     return edges;
+  }
+
+  public List<Edge<T>> getOutgoingEdges() {
+    return edges;
+  }
+
+  public List<Edge<T>> getIncomingEdges() {
+    return inEdges;
   }
 
   /**
@@ -194,34 +264,10 @@ public class Node<T> {
     return adjacentSet.contains(node);
   }
 
-  /** Sets the likelihood */
-  public void setLikelihood(double likelihood) {
-    this.likelihood = likelihood;
-  }
-
-  /** Retrieves the likelihood */
-  public double getLikelihood() {
-    return likelihood;
-  }
-
-  /** Sets the counter */
-  public void setCounter(int counter) {
-    this.counter = counter;
-  }
-
-  /** Retrieves the counter */
-  public int getCounter() {
-    return counter;
-  }
-
-  /** Rich output of information for this node */
-  public void printDetail() {
-    System.out.println("Value: " + value);
-    System.out.println("\tLikelihood: " + likelihood);
-    System.out.println("\tCounter: " + counter);
-  }
-
   public boolean equalValue(Node<T> node) {
+    // int a = this.value < 0 ? -1*this.value : this.value;
+    // int b = node.getValue() < 0 ? -1*node.getValue() : node.getValue();
+    // return a == b;
     return this.value == node.getValue();
   }
 
@@ -229,11 +275,17 @@ public class Node<T> {
   public boolean equals(Object obj) {
     if (obj instanceof Node) {
       boolean equality = this.value == ((Node<T>) obj).getValue();
-      equality &= this.isEntryNode == ((Node<T>) obj).isEntryNode;
-      equality &= this.isExitNode == ((Node<T>) obj).isExitNode;
+      equality &= this.isEntryNode == ((Node<T>) obj).isEntryNode();
+      equality &= this.isExitNode == ((Node<T>) obj).isExitNode();
+      // System.out.println("Equality between " + this + " and " + (Node<T>) obj + "= " + equality);
       return equality;
     }
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return value.hashCode();
   }
 
   @Override

@@ -13,31 +13,35 @@ public class Edge<T> {
   Node<T> exitNode;
   double numOfPaths;
   double totalLength;
-  // boolean isCrossEdge;
+  boolean isCrossEdge;
 
   public Edge(Node<T> entry, Node<T> exit) {
-    entryNode = entry;
-    exitNode = exit;
-    numOfPaths = 1;
-    totalLength = 1;
-    // isCrossEdge = false;
+    this(entry, exit, false);
+  }
+
+  public Edge(Node<T> entry, Node<T> exit, boolean crossEdge) {
+    this(entry, exit, 1, 1, crossEdge);
   }
 
   public Edge(Node<T> entry, Node<T> exit, double num, double length) {
+    this(entry, exit, num, length, false);
+  }
+
+  public Edge(Node<T> entry, Node<T> exit, double num, double length, boolean crossEdge) {
     entryNode = entry;
     exitNode = exit;
     numOfPaths = num;
     totalLength = length;
-    // isCrossEdge = false;
+    isCrossEdge = crossEdge;
   }
 
-  // public Edge(Node<T> entry, Node<T> exit, double num, double length, boolean cross) {
-  //   entryNode = entry;
-  //   exitNode = exit;
-  //   numOfPaths = num;
-  //   totalLength = length;
-  //   isCrossEdge = cross;
-  // }
+  public void setCross(boolean isCrossEdge) {
+    this.isCrossEdge = isCrossEdge;
+  }
+
+  public boolean isCrossEdge() {
+    return isCrossEdge;
+  }
 
   public boolean contains(Node<T> node) {
     return exitNode.equals(node);
@@ -65,6 +69,11 @@ public class Edge<T> {
 
   public Node<T> getExitNode() {
     return exitNode;
+  }
+
+  @Override
+  public String toString() {
+    return "Edge(" + entryNode + "-" + numOfPaths + "/" + totalLength + "-" + exitNode + ")";
   }
 
 }
